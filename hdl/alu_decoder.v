@@ -11,7 +11,18 @@ module alu_decoder(
     always @(aludec or funct3 or aluop) begin
         case (aluop)
             2'b00:  alucontrol = 4'b0000;
-            2'b01:  alucontrol = 4'b0001; 
+            2'b01:  begin
+                case (funct3)
+                    3'b000: alucontrol = 4'b0001;
+                    3'b001: alucontrol = 4'b0001;
+                    3'b100: alucontrol = 4'b0101;
+                    3'b101: alucontrol = 4'b0101;
+                    3'b110: alucontrol = 4'b1001;
+                    3'b111: alucontrol = 4'b1001;
+                    default: alucontrol = 4'b0001;
+                endcase
+            end
+            
             2'b10: begin
               case (funct3)
                 3'b000: begin
