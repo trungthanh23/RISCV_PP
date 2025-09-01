@@ -9,7 +9,8 @@ module reg_id_ex(
     input                   branchd,
     input       [3:0]       alucontrold,
     input                   alusrcd,
-
+    input                   alusrcd_u,
+    
     input       [31:0]      rd1d,
     input       [31:0]      rd2d,
 
@@ -31,7 +32,7 @@ module reg_id_ex(
     output  reg             branche,
     output  reg [3:0]       alucontrole,
     output  reg             alusrce,
-
+    output  reg             alusrce_u,
     output  reg [31:0]      rd1e,
     output  reg [31:0]      rd2e,
     output  reg [31:0]      pce,
@@ -53,6 +54,7 @@ module reg_id_ex(
             branche     <= 1'b0;
             alucontrole <= 3'b0;
             alusrce     <= 1'b0;
+            alusrce_u   <= 1'b0;
             rd1e        <= 32'b0;
             rd2e        <= 32'b0;
             pce         <= 32'b0;
@@ -71,6 +73,7 @@ module reg_id_ex(
             branche     <= 1'b0;
             alucontrole <= 3'b0;
             alusrce     <= 1'b0;
+            alusrce_u   <= 1'b0;
             rd1e        <= 32'b0;
             rd2e        <= 32'b0;
             pce         <= 32'b0;
@@ -89,6 +92,7 @@ module reg_id_ex(
             branche     <= branchd;
             alucontrole <= alucontrold;
             alusrce     <= alusrcd;
+            alusrce_u   <= alusrcd_u;
             rd1e        <= rd1d;
             rd2e        <= rd2d;
             pce         <= pcd;
