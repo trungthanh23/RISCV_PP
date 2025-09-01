@@ -22,6 +22,7 @@ module control(
         .resultsrc(resultsrc),
         .memwrite(memwrite),
         .alusrc(alusrc),
+        .alusrcU(alusrcU),
         .immsrc(immsrc),
         .regwrite(regwrite),
         .aluop(aluop)
