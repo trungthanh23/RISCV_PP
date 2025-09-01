@@ -249,10 +249,11 @@ module RISC_V_pipeline_top (
     end
 
     assign PCTargetE = PCE + ExtImmE;
-    reg [31:0] imm_U_type;
+    reg [31:0] imm_U_type_E;
     always @(*) begin
-        if (ALUSrcE_U) imm_U_type = ExtImmE;
-        else imm_U_type = PCTargetE;
+        if (ALUSrcE_U) imm_U_type_E = ExtImmE;
+        else imm_U_type_E = PCTargetE;
+    end
     alu alu(
         .a(SrcAE),
         .b(SrcBE),
@@ -272,7 +273,7 @@ module RISC_V_pipeline_top (
         .aluresulte(ALUResultE),
         .writedatae(WriteDataE),
         .rde(RdE),
-        .extimme(imm_U_type),
+        .extimme(imm_U_type_E),
         .opcodee(opcodeE),
         .funct3e(funct3E),
         .pcplus4e(PCPlus4E),
