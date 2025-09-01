@@ -249,7 +249,7 @@ module RISC_V_pipeline_top (
     end
 
     assign PCTargetE = PCE + ExtImmE;
-    reg imm_U_type;
+    reg [31:0] imm_U_type;
     always @(*) begin
         if (ALUSrcE_U) imm_U_type = ExtImmE;
         else imm_U_type = PCTargetE;
