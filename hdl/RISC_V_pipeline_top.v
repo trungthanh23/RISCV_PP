@@ -32,6 +32,8 @@ module RISC_V_pipeline_top (
     wire            BranchD;
     wire    [3:0]   ALUControlD;
     wire            ALUSrcD;
+    wire            ALUSrcD_U;
+    
     wire    [2:0]   ImmSrcD;
 
     wire    [31:0]  InstrD;
@@ -59,7 +61,8 @@ module RISC_V_pipeline_top (
     wire            BranchE;
     wire    [3:0]   ALUControlE;
     wire            ALUSrcE;
-
+    wire            ALUSrcE_U;
+    
     wire    [31:0]  RD1E;
     wire    [31:0]  RD2E;
     wire    [31:0]  PCE;
@@ -156,6 +159,7 @@ module RISC_V_pipeline_top (
         .branch(BranchD),
         .alucontrol(ALUControlD),
         .alusrc(ALUSrcD),
+        .alusrcU(ALUSrcD_U),
         .immsrc(ImmSrcD)
     );
 
@@ -193,6 +197,7 @@ module RISC_V_pipeline_top (
         .branchd(BranchD),
         .alucontrold(ALUControlD),
         .alusrcd(ALUSrcD),
+        .alusrcd_u(ALUSrcD_U),
         .rd1d(RD1D),
         .rd2d(RD2D),
         .pcd(PCD),
@@ -211,6 +216,7 @@ module RISC_V_pipeline_top (
         .branche(BranchE),
         .alucontrole(ALUControlE),
         .alusrce(ALUSrcE),
+        .alusrce_u(ALUSrcE_U),
         .rd1e(RD1E),
         .rd2e(RD2E),
         .pce(PCE),
@@ -243,7 +249,10 @@ module RISC_V_pipeline_top (
     end
 
     assign PCTargetE = PCE + ExtImmE;
-
+    wire imm_U_type;
+    always @(*) begin
+        if (ALUSrcE_U) imm_U_type = ExtImmE;
+        else imm_U_type = PCTargetE;
     alu alu(
         .a(SrcAE),
         .b(SrcBE),
@@ -263,7 +272,7 @@ module RISC_V_pipeline_top (
         .aluresulte(ALUResultE),
         .writedatae(WriteDataE),
         .rde(RdE),
-        .extimme(ExtImmE),
+        .extimme(imm_U_type),
         .opcodee(opcodeE),
         .funct3e(funct3E),
         .pcplus4e(PCPlus4E),
