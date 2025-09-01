@@ -9,6 +9,7 @@ module control(
     output          branch,
     output  [3:0]   alucontrol,
     output          alusrc,
+    output          alusrcU,
     output  [2:0]   immsrc
 );
 
