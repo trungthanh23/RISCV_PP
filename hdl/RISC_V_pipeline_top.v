@@ -330,6 +330,9 @@ module RISC_V_pipeline_top (
             end else begin
                 ReadDataM = RD_M;
             end
+        end else begin
+            write_type_M = 4'b1111;
+            ReadDataM    = RD_M;   
         end
     end
 
