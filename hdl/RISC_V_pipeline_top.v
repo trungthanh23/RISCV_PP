@@ -261,8 +261,19 @@ module RISC_V_pipeline_top (
         .result(ALUResultE),
         .zero(ZeroE)
     );
-
-    assign PCSrcE = (ZeroE & BranchE) | JumpE;
+    reg BranchTypeE;
+    always @(*) begin //sủ dụng funct3e để kiểm tra loại branch, ở đyâ thay vì ta lấy trực tiếp SrcAE và WriteDataE (tránh SrcBE dễ dính Imm) để tính
+        case (funct3E)
+            3'b000: BranchTypeE = (SrcAE == WriteDataE);                     // BEQ
+            3'b001: BranchTypeE = (SrcAE != WriteDataE);                     // BNE
+            3'b100: BranchTypeE = ($signed(SrcAE) < $signed(WriteDataE));    // BLT (signed)
+            3'b101: BranchTypeE = ($signed(SrcAE) >= $signed(WriteDataE));   // BGE (signed)
+            3'b110: BranchTypeE = (SrcAE < WriteDataE);                      // BLTU (unsigned)
+            3'b111: BranchTypeE = (SrcAE >= WriteDataE);                     // BGEU (unsigned)
+            default: BranchTypeE = 1'b0;
+        endcase
+    end
+    assign PCSrcE = (BranchTypeE & BranchE) | JumpE; //Nếu dùng Branch thì brnachE nhảy lên 1, sẽ tùy thuộc vào funct3e và branchtypeE để nhảy tiếp
 
     reg_ex_mem reg_ex_mem(
         .clk(clk),
