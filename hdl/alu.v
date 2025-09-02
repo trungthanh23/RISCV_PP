@@ -16,6 +16,13 @@ module alu (
   localparam SRA  = 4'b0111;
   localparam XOR  = 4'b1000;
   localparam SLTU = 4'b1001;
+  localparam BEQ  = 4'b1010;
+  localparam BNE  = 4'b1011;
+  localparam BLT  = 4'b1100;
+  localparam BGE  = 4'b1101;
+  localparam BLTU = 4'b1110;
+  localparam BGEU = 4'b1111;
+
 
   always @(a or b or alucontrol) begin
     case (alucontrol)
@@ -29,6 +36,12 @@ module alu (
       SLT     : result = ($signed(a) < $signed(b)) ? 32'd1 : 32'd0;
       SRA     : result = $signed(a) >>> b[4:0];
       SLTU    : result = (a < b) ? 32'd1 : 32'd0; 
+      BEQ     : result = (a == b) ? 32'd1 : 32'd0;
+      BNE     : result = (a != b) ? 32'd1 : 32'd0;
+      BLT     : result = ($signed(a) < $signed(b)) ? 32'd1 : 32'd0;
+      BGE     : result = ($signed(a) >= $signed(b)) ? 32'd1 : 32'd0;
+      BLTU    : result = (a < b) ? 32'd1 : 32'd0;
+      BGEU    : result = (a >= b) ? 32'd1 : 32'd0;
       default : result = 32'b0;
     endcase
   end

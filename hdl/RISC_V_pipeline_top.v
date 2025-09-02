@@ -71,6 +71,7 @@ module RISC_V_pipeline_top (
     wire    [2:0]   funct3E;
     wire    [31:0]  PCPlus4E;
     wire    [31:0]  PCTargetE;
+    reg     [31:0]  ExtImmE_or_PCTargetE;
 
     wire            PCSrcE;
     wire            ZeroE;
@@ -244,6 +245,11 @@ module RISC_V_pipeline_top (
 
     assign PCTargetE = PCE + ExtImmE;
 
+    always @(*) begin
+        if(ALUSrcE) ExtImmE_or_PCTargetE = ExtImmE;
+        else        ExtImmE_or_PCTargetE = PCTargetE;
+    end
+
     alu alu(
         .a(SrcAE),
         .b(SrcBE),
@@ -252,7 +258,7 @@ module RISC_V_pipeline_top (
         .zero(ZeroE)
     );
 
-    assign PCSrcE = (ZeroE & BranchE) | JumpE;
+    assign PCSrcE = (ALUResultE[0] & BranchE) | JumpE;
 
     reg_ex_mem reg_ex_mem(
         .clk(clk),
@@ -263,7 +269,7 @@ module RISC_V_pipeline_top (
         .aluresulte(ALUResultE),
         .writedatae(WriteDataE),
         .rde(RdE),
-        .extimme(ExtImmE),
+        .extimme(ExtImmE_or_PCTargetE),
         .opcodee(opcodeE),
         .funct3e(funct3E),
         .pcplus4e(PCPlus4E),
