@@ -13,37 +13,37 @@ main:
 
     # --- PHẦN 2: KIỂM TRA CÁC LỆNH BRANCH ---
     # BEQ: x1 == x3 → nhảy, gán x10 = 1
-    beq x1, x3, 0x8
+    beq x1, x3, 12
     addi x10, x0, 0x0
     beq x0, x0, 0x8
     addi x10, x0, 0x1
 
     # BNE: x1 != x2 → nhảy, gán x11 = 1
-    bne x1, x2, 0x8
+    bne x1, x2, 12
     addi x11, x0, 0x0
     beq x0, x0, 0x8
     addi x11, x0, 0x1
 
     # BLT: x4 < x5 → nhảy, gán x12 = 1
-    blt x4, x5, 0x8
+    blt x4, x5, 12
     addi x12, x0, 0x0
     beq x0, x0, 0x8
     addi x12, x0, 0x1
 
     # BGE: x2 >= x1 → nhảy, gán x13 = 1
-    bge x2, x1, 0x8
+    bge x2, x1, 12
     addi x13, x0, 0x0
     beq x0, x0, 0x8
     addi x13, x0, 0x1
 
     # BLTU: unsigned(0xA) < unsigned(0x14) → nhảy, gán x14 = 1
-    bltu x1, x2, 0x8
+    bltu x1, x2, 12
     addi x14, x0, 0x0
     beq x0, x0, 0x8
     addi x14, x0, 0x1
 
     # BGEU: unsigned(0x14) >= unsigned(0xA) → nhảy, gán x15 = 1
-    bgeu x2, x1, 0x8
+    bgeu x2, x1, 12
     addi x15, x0, 0x0
     beq x0, x0, 0x8
     addi x15, x0, 0x1
