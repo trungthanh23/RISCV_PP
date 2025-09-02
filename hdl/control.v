@@ -10,6 +10,7 @@ module control(
     output  [3:0]   alucontrol,
     output          alusrc,
     output          alusrcU,
+    output          jal_or_jalr,
     output  [2:0]   immsrc
 );
 
@@ -23,6 +24,7 @@ module control(
         .memwrite(memwrite),
         .alusrc(alusrc),
         .alusrcU(alusrcU),
+        .jal_or_jalr(jal_or_jalr),
         .immsrc(immsrc),
         .regwrite(regwrite),
         .aluop(aluop)
