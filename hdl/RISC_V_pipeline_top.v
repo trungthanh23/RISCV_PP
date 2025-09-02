@@ -120,7 +120,7 @@ module RISC_V_pipeline_top (
     end
 
     always @(*) begin
-        if(PCSrcE)  PCF_mux_out_2 = PCTargetE;
+        if(PCSrcE)  PCF_mux_out_2 = PCF_mux_out_1;
         else        PCF_mux_out_2 = PCPlus4F;
     end
 
