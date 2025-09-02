@@ -5,6 +5,7 @@ module main_decoder(
     output reg       memwrite,
     output reg       alusrc,
     output reg       alusrcU,
+    output reg       jal_or_jalr,
     output reg       regwrite,
     output reg [1:0] aluop,
     output reg [2:0] immsrc,
@@ -17,6 +18,7 @@ module main_decoder(
         immsrc    = 3'b000;
         alusrcU   = 0;
         alusrc    = 0;
+        jal_or_jalr  = 0;
         memwrite  = 0;
         resultsrc = 2'b00;
         branch    = 0;
@@ -56,8 +58,17 @@ module main_decoder(
             7'b1101111: begin // J-type (JAL)
                 regwrite  = 1;
                 jump      = 1;
+                jal_or_jalr = 0;
                 immsrc    = 3'b011;
                 resultsrc = 2'b10; // PC+4
+            end
+            
+            7'b1100111: begin // J-type (JALR)
+                regwrite  = 1;
+                jal_or_jalr = 1;
+                alusrc    = 1;
+                resultsrc = 2'b10;
+                jump      = 1;
             end
 
             7'b0110111: begin // LUI
@@ -71,7 +82,7 @@ module main_decoder(
                 regwrite  = 1;
                 immsrc    = 3'b100;
                 resultsrc = 2'b11;
-            end
+            end            
         endcase
     end
 endmodule
