@@ -1,33 +1,77 @@
 module main_decoder(
     input   [6:0]   op,
-    output          branch,
-    output          jump,
-    output          memwrite,
-    output          alusrc,
-    output          alusrcU,
-    output          regwrite,
-    output  [1:0]   aluop,
-    output  [2:0]   immsrc,
-    output  [1:0]   resultsrc
+    output reg       branch,
+    output reg       jump,
+    output reg       memwrite,
+    output reg       alusrc,
+    output reg       alusrcU,
+    output reg       regwrite,
+    output reg [1:0] aluop,
+    output reg [2:0] immsrc,
+    output reg [1:0] resultsrc
 );
 
-    reg [11:0] decode;
+    always @(*) begin
+        // giá trị mặc định (tránh latch)
+        regwrite  = 0;
+        immsrc    = 3'b000;
+        alusrcU   = 0;
+        alusrc    = 0;
+        memwrite  = 0;
+        resultsrc = 2'b00;
+        branch    = 0;
+        aluop     = 2'b00;
+        jump      = 0;
 
-    assign {regwrite, immsrc, alusrcU, alusrc, memwrite, resultsrc, branch, aluop, jump} = decode;
-
-    always @(op) begin
         case (op)
-            7'b0110011: decode = 12'b1_XXX_0_0_0_00_0_10_0; // R-type_RV32I
-            7'b0010011: decode = 12'b1_000_0_1_0_00_0_10_0; // I_type_RV32I
-            7'b1100011: decode = 12'b0_010_0_0_0_XX_1_01_0; // B-type
-            7'b0000011: decode = 12'b1_000_0_1_0_01_0_00_0; // Load
-            7'b0100011: decode = 12'b0_001_0_1_1_00_0_00_0; // sw
-            7'b1101111: decode = 12'b1_011_0_X_0_10_0_XX_1; // jump
-            7'b0110111: decode = 12'b1_100_1_0_0_11_0_00_0; // lui
-            7'b0010111: decode = 12'b1_100_0_0_0_11_0_00_0; // auipc
-            default: decode = 12'bXXXXXXXXXXXX;
+            7'b0110011: begin // R-type
+                regwrite  = 1;
+                aluop     = 2'b10;
+            end
+
+            7'b0010011: begin // I-type (ADDI, SLTI, ANDI, ORI, XORI, SLLI, SRLI, SRAI)
+                regwrite  = 1;
+                alusrc    = 1;
+                aluop     = 2'b10;
+            end
+
+            7'b0000011: begin // Load (LW)
+                regwrite  = 1;
+                alusrc    = 1;
+                resultsrc = 2'b01; // lấy dữ liệu từ memory
+            end
+
+            7'b0100011: begin // S-type (SW)
+                alusrc    = 1;
+                memwrite  = 1;
+                immsrc    = 3'b001;
+            end
+
+            7'b1100011: begin // B-type (BEQ, BNE, BLT, ...)
+                branch    = 1;
+                aluop     = 2'b01;
+                immsrc    = 3'b010;
+            end
+
+            7'b1101111: begin // J-type (JAL)
+                regwrite  = 1;
+                jump      = 1;
+                immsrc    = 3'b011;
+                resultsrc = 2'b10; // PC+4
+            end
+
+            7'b0110111: begin // LUI
+                regwrite  = 1;
+                alusrcU   = 1;  // dùng immediate kiểu U
+                immsrc    = 3'b100;
+                resultsrc = 2'b11;
+            end
+
+            7'b0010111: begin // AUIPC
+                regwrite  = 1;
+                immsrc    = 3'b100;
+                resultsrc = 2'b11;
+            end
         endcase
     end
-
-
 endmodule
