@@ -65,6 +65,8 @@ module RISC_V_pipeline_top (
     wire            ALUSrcE;
     wire            ALUSrcE_U;
     wire            jal_or_jalr_E;
+    reg     [31:0]  imm_U_typeE;
+    reg             BranchTypeE;
     wire    [31:0]  RD1E;
     wire    [31:0]  RD2E;
     wire    [31:0]  PCE;
@@ -258,10 +260,10 @@ module RISC_V_pipeline_top (
     end
 
     assign PCTargetE = PCE + ExtImmE;
-    reg [31:0] imm_U_type;
+    
     always @(*) begin
-        if (ALUSrcE_U) imm_U_type = ExtImmE;
-        else imm_U_type = PCTargetE;
+        if (ALUSrcE_U) imm_U_typeE = ExtImmE;
+        else imm_U_typeE = PCTargetE;
     end
     alu alu(
         .a(SrcAE),
@@ -270,7 +272,6 @@ module RISC_V_pipeline_top (
         .result(ALUResultE),
         .zero(ZeroE)
     );
-    reg BranchTypeE;
     always @(*) begin //sủ dụng funct3e để kiểm tra loại branch, ở đyâ thay vì ta lấy trực tiếp SrcAE và WriteDataE (tránh SrcBE dễ dính Imm) để tính
         case (funct3E)
             3'b000: BranchTypeE = (SrcAE == WriteDataE);                     // BEQ
