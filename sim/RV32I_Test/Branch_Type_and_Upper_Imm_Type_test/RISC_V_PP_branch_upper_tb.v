@@ -1,6 +1,6 @@
 `timescale 1ns/1ps
 
-module RISC_V_pp_top_I_type_tb();
+module RISC_V_pp_top_B_and_U_type_tb();
 
     reg  clk;
     reg  rst_n;
