@@ -18,7 +18,8 @@ module RISC_V_pipeline_top (
     wire            StallF;
     wire    [31:0]  RDF;
     wire    [31:0]  PCPlus4F;
-    reg     [31:0]  PCF_mux_out;
+    reg     [31:0]  PCF_mux_out_1;
+    reg     [31:0]  PCF_mux_out_2;
     reg     [31:0]  PCF;
 
     //--Decode--//
@@ -33,6 +34,7 @@ module RISC_V_pipeline_top (
     wire    [3:0]   ALUControlD;
     wire            ALUSrcD;
     wire            ALUSrcD_U;
+    wire            jal_or_jalr_D;
     
     wire    [2:0]   ImmSrcD;
 
@@ -62,7 +64,7 @@ module RISC_V_pipeline_top (
     wire    [3:0]   ALUControlE;
     wire            ALUSrcE;
     wire            ALUSrcE_U;
-    
+    wire            jal_or_jalr_E;
     wire    [31:0]  RD1E;
     wire    [31:0]  RD2E;
     wire    [31:0]  PCE;
@@ -112,16 +114,20 @@ module RISC_V_pipeline_top (
 
     /*---------------------------------------------------Design----------------------------------------------------*/
     //-----------------------Fetch state-----------------------//
-    
     always @(*) begin
-        if(PCSrcE)  PCF_mux_out = PCTargetE;
-        else        PCF_mux_out = PCPlus4F;
+        if (jal_or_jalr_E) PCF_mux_out_1 = ALUResultE;
+        else PCF_mux_out_1 = PCTargetE;
+    end
+
+    always @(*) begin
+        if(PCSrcE)  PCF_mux_out_2 = PCTargetE;
+        else        PCF_mux_out_2 = PCPlus4F;
     end
 
     //--PC--//
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) PCF <= 32'b0;
-        else if (!StallF) PCF <= PCF_mux_out;
+        else if (!StallF) PCF <= PCF_mux_out_2;
         else PCF <= PCF; 
     end
 
@@ -160,6 +166,7 @@ module RISC_V_pipeline_top (
         .alucontrol(ALUControlD),
         .alusrc(ALUSrcD),
         .alusrcU(ALUSrcD_U),
+        .jal_or_jalr(jal_or_jalr_D),
         .immsrc(ImmSrcD)
     );
 
@@ -198,6 +205,7 @@ module RISC_V_pipeline_top (
         .alucontrold(ALUControlD),
         .alusrcd(ALUSrcD),
         .alusrcd_u(ALUSrcD_U),
+        .jal_or_jalr_d(jal_or_jalr_D),
         .rd1d(RD1D),
         .rd2d(RD2D),
         .pcd(PCD),
@@ -217,6 +225,7 @@ module RISC_V_pipeline_top (
         .alucontrole(ALUControlE),
         .alusrce(ALUSrcE),
         .alusrce_u(ALUSrcE_U),
+        .jal_or_jalr_e(jal_or_jalr_E),
         .rd1e(RD1E),
         .rd2e(RD2E),
         .pce(PCE),
@@ -249,10 +258,10 @@ module RISC_V_pipeline_top (
     end
 
     assign PCTargetE = PCE + ExtImmE;
-    reg [31:0] imm_U_type_E;
+    reg [31:0] imm_U_type;
     always @(*) begin
-        if (ALUSrcE_U) imm_U_type_E = ExtImmE;
-        else imm_U_type_E = PCTargetE;
+        if (ALUSrcE_U) imm_U_type = ExtImmE;
+        else imm_U_type = PCTargetE;
     end
     alu alu(
         .a(SrcAE),
@@ -284,7 +293,7 @@ module RISC_V_pipeline_top (
         .aluresulte(ALUResultE),
         .writedatae(WriteDataE),
         .rde(RdE),
-        .extimme(imm_U_type_E),
+        .extimme(imm_U_type),
         .opcodee(opcodeE),
         .funct3e(funct3E),
         .pcplus4e(PCPlus4E),
