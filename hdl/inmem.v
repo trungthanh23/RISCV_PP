@@ -5,7 +5,7 @@ module inmem(
     reg [31:0] mem [63:0];
 
     initial begin
-        $readmemh("/home/thanhtrung/Code/Project/RICS-V Processor/sim/src/RISCV_PP_Test/RV32I_Test/U_type_test/u_type_test.txt", mem);
+        $readmemh("/home/thanhtrung/Code/Project/RICS-V Processor/sim/src/RISCV_PP_Test/RV32I_Test/I_Type_test/test_i_type.txt", mem);
     end
 
     assign rd = mem[a[31:2]];

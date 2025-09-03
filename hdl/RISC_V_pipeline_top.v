@@ -147,7 +147,7 @@ module RISC_V_pipeline_top (
 
     //control unit
     control control(
-        .funct7(InstrD[30]),
+        .funct7(InstrD[31:25]),
         .funct3(InstrD[14:12]),
         .op(InstrD[6:0]),
         .regwrite(RegWriteD),
@@ -176,7 +176,7 @@ module RISC_V_pipeline_top (
     assign Rs2D     = InstrD[24:20];
     assign RdD      = InstrD[11:7];
     assign funct3D  = InstrD[14:12];
-    assign opcodeD  = InstrD[6:0];
+    assign opcodeD  = InstrD[6 : 0];
 
     extend extend(
         .instr(InstrD),
@@ -243,7 +243,8 @@ module RISC_V_pipeline_top (
         else            SrcBE = WriteDataE;
     end
 
-    assign PCTargetE = PCE + ExtImmE;
+    //assign PCTargetE = PCE + ExtImmE;
+    assign PCTargetE = (opcodeE == 7'b1100111) ? ALUResultE : (PCE + ExtImmE);
 
     always @(*) begin
         if(ALUSrcE) ExtImmE_or_PCTargetE = ExtImmE;
